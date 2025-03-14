@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
+use App\Notifications\LowStockNotification;
 use Illuminate\Http\JsonResponse;
+use Spatie\Permission\Models\Role;
 
 class DashboardController extends Controller
 {
@@ -22,6 +24,21 @@ class DashboardController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => $stats
+        ]);
+    }
+
+    public function testLowStock(){
+        $product = Product::first();
+        $product->stock = 5;
+        $product->save();
+
+        // get super_admin and product_manager 
+        $notifiables = Role::whereIn('name', ['super_admin', 'product_manager'])->get();
+        $product->notify($notifiables, new LowStockNotification($product));
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Notification sent'
         ]);
     }
 }

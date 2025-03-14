@@ -34,13 +34,19 @@ class PermissionRoleSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::create(['name' => $permission , 'guard_name' => 'api']);
         }
 
-        $superAdmin = Role::create(['name' => 'super_admin']);
+        $superAdmin = Role::create([
+            'name' => 'super_admin',
+            'guard_name' => 'api'
+        ]);
         $superAdmin->givePermissionTo(Permission::all());
 
-        $productManager = Role::create(['name' => 'product_manager']);
+        $productManager = Role::create([
+            'name' => 'product_manager',
+            'guard_name' => 'api'
+        ]);
         $productManager->givePermissionTo([
             'view_dashboard',
             'view_products',
@@ -53,7 +59,7 @@ class PermissionRoleSeeder extends Seeder
             'delete_categories'
         ]);
 
-        $userManager = Role::create(['name' => 'user_manager']);
+        $userManager = Role::create(['name' => 'user_manager', 'guard_name' => 'api']);
         $userManager->givePermissionTo([
             'view_dashboard',
             'view_users',
